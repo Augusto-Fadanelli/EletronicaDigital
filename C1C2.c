@@ -1,19 +1,23 @@
 #include <stdio.h>
 #include <stdlib.h> //para a funcao exit
 
-void c1(int *vetc1, int *vet);
+void sumSub(int *operation, const int *num1, const int *num2);
+void c1(int *vetc1, const int *vet);
 void c2(int *vetc2, const int *vetc1);
 
 int main(int argc, char **argv)
 {
-	int num1[8] = {0, 1, 0, 0, 0, 0, 0, 0}; //Primeiro octeto binario
-	int num2[8] = {0, 1, 1, 1, 1, 1, 1, 0}; //Segundo octeto binario
+	int num1[8] = {0, 1, 0, 1, 1, 1, 1, 0}; //Primeiro octeto binario
+	int num2[8] = {0, 0, 0, 0, 0, 0, 1, 1}; //Segundo octeto binario
 	int numc1[8] = {0, 0, 0, 0, 0, 0, 0, 0}; //Vetor C1 (NAO ALTERAR OS VALORES)
 	int numc2[8] = {0, 0, 0, 0, 0, 0, 0, 0};
+	int sum[8] = {0, 0, 0, 0, 0, 0, 0, 0};
+	int sub[8] = {0, 0, 0, 0, 0, 0, 0, 0};
 
-	//sum();
+	sumSub(sum, num1, num2);
 	c1(numc1, num2); //O num2 sera complementado a 1
 	c2(numc2, numc1); //complemento a 2
+	sumSub(sub, num1, numc2); //A soma do num1+numc2 e o msm que a subtracao de num1-num2
 	
 	//mostrar
 	printf("num1:\n");
@@ -28,6 +32,12 @@ int main(int argc, char **argv)
 	}
 	printf("\n");
 	
+	printf("sum:\n");
+	for(int i=0; i<8; i++){
+		printf("%d, ", sum[i]);
+	}
+	printf("\n");
+	
 	printf("numc1:\n");
 	for(int i=0; i<8; i++){
 		printf("%d, ", numc1[i]);
@@ -39,12 +49,45 @@ int main(int argc, char **argv)
 		printf("%d, ", numc2[i]);
 	}
 	printf("\n");
+	
+	printf("sub:\n");
+	for(int i=0; i<8; i++){
+		printf("%d, ", sub[i]);
+	}
+	printf("\n");
 
 	return 0;
 }
 
+void sumSub(int operation[], const int num1[], const int num2[]){
+	
+	int soma;
+	int k=0;
+	
+	for(int i=7; i>=0; i--){
+		soma = num1[i] + num2[i] + k;
+		k = 0;
+		
+		if(soma == 0){ //0 + 0 = 0 (binario)
+			operation[i] = 0;
+		}else if(soma == 1){ //0 + 1 ou 1 + 0 = 1 (binario)
+			operation[i] = 1;
+		}else if(soma == 2){ //1 + 1 = 10 (binario)
+			k = 1;
+			operation[i] = 0;
+		}else if(soma == 3){ //1 + 1 + 1 = 11 (binario)
+			k = 1;
+			operation[i] = 1;
+		}else{
+			printf("ERRO NO(S) VETOR(ES) num1 E/OU num2\n");
+			exit(0);
+		}
+	}
+	
+}
+
 //Faz a operacao de complemento a 1
-void c1(int vetc1[], int vet[]){
+void c1(int vetc1[], const int vet[]){
 	
 	//int i = 7; //contador
 	for(int i=0; i<8; i++){
