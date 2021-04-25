@@ -1,2 +1,2 @@
-# EletronicaDigital
+# Eletronica Digital
 Calculos com binarios
