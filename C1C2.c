@@ -1,18 +1,26 @@
 #include <stdio.h>
 #include <stdlib.h> //para a funcao exit
 
+void decToBin(int *num, const int dec);
 void sumSub(int *operation, const int *num1, const int *num2);
 void c1(int *vetc1, const int *vet);
 void c2(int *vetc2, const int *vetc1);
 
 int main(int argc, char **argv)
 {
-	int num1[8] = {0, 1, 0, 1, 1, 1, 1, 0}; //Primeiro octeto binario
-	int num2[8] = {0, 0, 0, 0, 0, 0, 1, 1}; //Segundo octeto binario
-	int numc1[8] = {0, 0, 0, 0, 0, 0, 0, 0}; //Vetor C1 (NAO ALTERAR OS VALORES)
-	int numc2[8] = {0, 0, 0, 0, 0, 0, 0, 0};
-	int sum[8] = {0, 0, 0, 0, 0, 0, 0, 0};
-	int sub[8] = {0, 0, 0, 0, 0, 0, 0, 0};
+	//*NAO ALTERAR OS VALORES DOS VETORES*
+	int num1[8] = {0, 0, 0, 0, 0, 0, 0, 0}; //Primeiro octeto binario
+	int num2[8] = {0, 0, 0, 0, 0, 0, 0, 0}; //Segundo octeto binario
+	int numc1[8] = {0, 0, 0, 0, 0, 0, 0, 0}; //Vetor C1 (Complemento a 1 do num2)
+	int numc2[8] = {0, 0, 0, 0, 0, 0, 0, 0}; //Vetor C2 (Complemento a 2 do num2)
+	int sum[8] = {0, 0, 0, 0, 0, 0, 0, 0}; //num1 + num2
+	int sub[8] = {0, 0, 0, 0, 0, 0, 0, 0}; //num1 + numc2 (Subtracao de num1 - num2)
+
+	int dec1 = 10;
+	int dec2 = 127;
+	
+	decToBin(num1, dec1);
+	decToBin(num2, dec2);
 
 	sumSub(sum, num1, num2);
 	c1(numc1, num2); //O num2 sera complementado a 1
@@ -59,6 +67,21 @@ int main(int argc, char **argv)
 	return 0;
 }
 
+void decToBin(int *num, const int dec){
+	
+	if(dec > 0){
+		int q = dec; //quociente da divisao
+		int i=7;
+		do{
+			num[i] = q % 2;
+			q /= 2;
+			i--;
+		}while(q != 0);
+	}else if(dec < 0){
+		printf("ERRO: NUMERO DECIMAL NEGATIVO!");
+	} //Se o numero for igual a 0 nao e feito nada (o vetor ja inicia com valor 0)
+}
+
 void sumSub(int operation[], const int num1[], const int num2[]){
 	
 	int soma;
@@ -79,7 +102,7 @@ void sumSub(int operation[], const int num1[], const int num2[]){
 			k = 1;
 			operation[i] = 1;
 		}else{
-			printf("ERRO NO(S) VETOR(ES) num1 E/OU num2\n");
+			printf("ERRO NO(S) VETOR(ES) num1 E/OU num2!\n");
 			exit(0);
 		}
 	}
@@ -96,7 +119,7 @@ void c1(int vetc1[], const int vet[]){
 		}else if(vet[i] == 1){
 			vetc1[i] = 0;
 		}else{
-			printf("ERRO NO VETOR num2\n");
+			printf("ERRO NO VETOR num2!\n");
 			exit(0);
 		}
 
