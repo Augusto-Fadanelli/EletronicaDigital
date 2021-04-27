@@ -27,8 +27,8 @@ int main(int argc, char **argv)
         exit(0);
     }
 
-	int dec1;
-	int dec2;
+	int dec1 = 0;
+	int dec2 = 0;
 
     fscanf(file, "%i %i", &dec1, &dec2);
     printf("%i %i\n", dec1, dec2);
