@@ -8,15 +8,14 @@ void c2(int *vetc2, const int *vetc1);
 
 int main(int argc, char **argv)
 {
-	//*NAO ALTERAR OS VALORES DOS VETORES*
-	int num1[8] = {0, 0, 0, 0, 0, 0, 0, 0}; //Primeiro octeto binario
-	int num2[8] = {0, 0, 0, 0, 0, 0, 0, 0}; //Segundo octeto binario
-	int numc1[8] = {0, 0, 0, 0, 0, 0, 0, 0}; //Vetor C1 (Complemento a 1 do num2)
-	int numc2[8] = {0, 0, 0, 0, 0, 0, 0, 0}; //Vetor C2 (Complemento a 2 do num2)
-	int sum[8] = {0, 0, 0, 0, 0, 0, 0, 0}; //num1 + num2
-	int sub[8] = {0, 0, 0, 0, 0, 0, 0, 0}; //num1 + numc2 (Subtracao de num1 - num2)
+	int num1[8]; //Primeiro octeto binario
+	int num2[8]; //Segundo octeto binario
+	int numc1[8]; //Vetor C1 (Complemento a 1 do num2)
+	int numc2[8]; //Vetor C2 (Complemento a 2 do num2)
+	int sum[8]; //num1 + num2
+	int sub[8]; //num1 + numc2 (Subtracao de num1 - num2)
 
-	//Manipular arquivo .txt
+	//Abre arquivo .txt
     FILE *file;
     file = fopen("decimais.txt", "r");
 
@@ -29,60 +28,81 @@ int main(int argc, char **argv)
 
 	int dec1 = 0;
 	int dec2 = 0;
+	//char fim = ' ';
+	//int i = 0;
+    //fscanf(file, "%i %i", &dec1, &dec2);
+    while(!feof(file)){ //(fim != 'f')
 
-    fscanf(file, "%i %i", &dec1, &dec2);
-    printf("%i %i\n", dec1, dec2);
+        //i++;
 
-    fclose(file); //Fim da manipulação de arquivo .txt
+        fscanf(file, "%i %i", &dec1, &dec2);
+        printf("%i %i\n", dec1, dec2);
+
+        //Zera vetores
+        for(int i=0; i<8; i++){
+            num1[i] = 0;
+            num2[i] = 0;
+            numc1[i] = 0;
+            numc2[i] = 0;
+            sum[i] = 0;
+            sub[i] = 0;
+        }
+
+        decToBin(num1, dec1);
+        decToBin(num2, dec2);
+
+        sumSub(sum, num1, num2);
+        c1(numc1, num2); //O num2 sera complementado a 1
+        c2(numc2, numc1); //complemento a 2
+        sumSub(sub, num1, numc2); //A soma do num1+numc2 e o msm que a subtracao de num1-num2
+
+        //mostrar
+        printf("num1:\n");
+        for(int i=0; i<8; i++){
+            printf("%d ", num1[i]);
+        }
+        printf("\n");
+
+        printf("num2:\n");
+        for(int i=0; i<8; i++){
+            printf("%d ", num2[i]);
+        }
+        printf("\n");
+
+        printf("sum:\n");
+        for(int i=0; i<8; i++){
+            printf("%d ", sum[i]);
+        }
+        printf("\n");
+
+        printf("numc1:\n");
+        for(int i=0; i<8; i++){
+            printf("%d ", numc1[i]);
+        }
+        printf("\n");
+
+        printf("numc2:\n");
+        for(int i=0; i<8; i++){
+            printf("%d ", numc2[i]);
+        }
+        printf("\n");
+
+        printf("sub:\n");
+        for(int i=0; i<8; i++){
+            printf("%d ", sub[i]);
+        }
+        printf("\n");
+
+        printf("\n----------\n\n");
+
+        //fscanf(file, "%i %i", &dec1, &dec2);
+    }
+
+    fclose(file); //Fecha arquivo .txt
     /*obs: verificar se o numero é maior q 127 ou "menor q -127"
     * tentar adaptar o código pra funcionaro com mais de dois inteiros na msm linha
     * Executar novamente a cada linha com os valores atualizados
     */
-
-	decToBin(num1, dec1);
-	decToBin(num2, dec2);
-
-	sumSub(sum, num1, num2);
-	c1(numc1, num2); //O num2 sera complementado a 1
-	c2(numc2, numc1); //complemento a 2
-	sumSub(sub, num1, numc2); //A soma do num1+numc2 e o msm que a subtracao de num1-num2
-
-	//mostrar
-	printf("num1:\n");
-	for(int i=0; i<8; i++){
-		printf("%d ", num1[i]);
-	}
-	printf("\n");
-
-	printf("num2:\n");
-	for(int i=0; i<8; i++){
-		printf("%d ", num2[i]);
-	}
-	printf("\n");
-
-	printf("sum:\n");
-	for(int i=0; i<8; i++){
-		printf("%d ", sum[i]);
-	}
-	printf("\n");
-
-	printf("numc1:\n");
-	for(int i=0; i<8; i++){
-		printf("%d ", numc1[i]);
-	}
-	printf("\n");
-
-	printf("numc2:\n");
-	for(int i=0; i<8; i++){
-		printf("%d ", numc2[i]);
-	}
-	printf("\n");
-
-	printf("sub:\n");
-	for(int i=0; i<8; i++){
-		printf("%d ", sub[i]);
-	}
-	printf("\n");
 
 	return 0;
 }
@@ -103,7 +123,7 @@ void decToBin(int *num, const int dec){
 	} //Se o numero for igual a 0 nao e feito nada (o vetor ja inicia com valor 0)
 }
 
-void sumSub(int operation[], const int num1[], const int num2[]){
+void sumSub(int operation[], const int num1[], const int num2[]){//buga se subtrair por um numero maior ex: 1 - 2
 
 	int soma;
 	int k=0;
