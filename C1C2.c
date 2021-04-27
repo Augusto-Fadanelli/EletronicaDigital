@@ -16,9 +16,29 @@ int main(int argc, char **argv)
 	int sum[8] = {0, 0, 0, 0, 0, 0, 0, 0}; //num1 + num2
 	int sub[8] = {0, 0, 0, 0, 0, 0, 0, 0}; //num1 + numc2 (Subtracao de num1 - num2)
 
-	int dec1 = 10;
-	int dec2 = 127;
-	
+	//Manipular arquivo .txt
+    FILE *file;
+    file = fopen("decimais.txt", "r");
+
+    if(file == NULL){
+        printf("Arquivo nao existe!\n");
+        getchar();
+        //Getchar(); + scanf("c\n");
+        exit(0);
+    }
+
+	int dec1;
+	int dec2;
+
+    fscanf(file, "%i %i", &dec1, &dec2);
+    printf("%i %i\n", dec1, dec2);
+
+    fclose(file); //Fim da manipulação de arquivo .txt
+    /*obs: verificar se o numero é maior q 127 ou "menor q -127"
+    * tentar adaptar o código pra funcionaro com mais de dois inteiros na msm linha
+    * Executar novamente a cada linha com os valores atualizados
+    */
+
 	decToBin(num1, dec1);
 	decToBin(num2, dec2);
 
@@ -26,41 +46,41 @@ int main(int argc, char **argv)
 	c1(numc1, num2); //O num2 sera complementado a 1
 	c2(numc2, numc1); //complemento a 2
 	sumSub(sub, num1, numc2); //A soma do num1+numc2 e o msm que a subtracao de num1-num2
-	
+
 	//mostrar
 	printf("num1:\n");
 	for(int i=0; i<8; i++){
-		printf("%d, ", num1[i]);
+		printf("%d ", num1[i]);
 	}
 	printf("\n");
-	
+
 	printf("num2:\n");
 	for(int i=0; i<8; i++){
-		printf("%d, ", num2[i]);
+		printf("%d ", num2[i]);
 	}
 	printf("\n");
-	
+
 	printf("sum:\n");
 	for(int i=0; i<8; i++){
-		printf("%d, ", sum[i]);
+		printf("%d ", sum[i]);
 	}
 	printf("\n");
-	
+
 	printf("numc1:\n");
 	for(int i=0; i<8; i++){
-		printf("%d, ", numc1[i]);
+		printf("%d ", numc1[i]);
 	}
 	printf("\n");
-	
+
 	printf("numc2:\n");
 	for(int i=0; i<8; i++){
-		printf("%d, ", numc2[i]);
+		printf("%d ", numc2[i]);
 	}
 	printf("\n");
-	
+
 	printf("sub:\n");
 	for(int i=0; i<8; i++){
-		printf("%d, ", sub[i]);
+		printf("%d ", sub[i]);
 	}
 	printf("\n");
 
@@ -68,7 +88,7 @@ int main(int argc, char **argv)
 }
 
 void decToBin(int *num, const int dec){
-	
+
 	if(dec > 0){
 		int q = dec; //quociente da divisao
 		int i=7;
@@ -78,19 +98,20 @@ void decToBin(int *num, const int dec){
 			i--;
 		}while(q != 0);
 	}else if(dec < 0){
-		printf("ERRO: NUMERO DECIMAL NEGATIVO!");
+		printf("ERRO: NUMERO DECIMAL NEGATIVO!\n");
+		exit(0);
 	} //Se o numero for igual a 0 nao e feito nada (o vetor ja inicia com valor 0)
 }
 
 void sumSub(int operation[], const int num1[], const int num2[]){
-	
+
 	int soma;
 	int k=0;
-	
+
 	for(int i=7; i>=0; i--){
 		soma = num1[i] + num2[i] + k;
 		k = 0;
-		
+
 		if(soma == 0){ //0 + 0 = 0 (binario)
 			operation[i] = 0;
 		}else if(soma == 1){ //0 + 1 ou 1 + 0 = 1 (binario)
@@ -106,12 +127,12 @@ void sumSub(int operation[], const int num1[], const int num2[]){
 			exit(0);
 		}
 	}
-	
+
 }
 
 //Faz a operacao de complemento a 1
 void c1(int vetc1[], const int vet[]){
-	
+
 	//int i = 7; //contador
 	for(int i=0; i<8; i++){
 		if(vet[i] == 0){
@@ -124,17 +145,17 @@ void c1(int vetc1[], const int vet[]){
 		}
 
 	}
-	
+
 }
 
 //Faz a operacao de complemento a 2
 void c2(int vetc2[], const int vetc1[]){
-	
+
 	int vet[8];
 	for(int i=0; i<8; i++){
 		vet[i] = vetc1[i];
 	}
-	
+
 	//Complemento a 2
 	int i = 7; //contador
 	do{
@@ -152,5 +173,5 @@ void c2(int vetc2[], const int vetc1[]){
 		}
 		i--;
 	}while(i != -1);
-	
+
 }
