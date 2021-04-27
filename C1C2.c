@@ -32,9 +32,8 @@ int main(int argc, char **argv)
 	int dec1 = 0;
 	int dec2 = 0;
 
+	fscanf(file, "%i %i", &dec1, &dec2);
     while(!feof(file)){
-
-        fscanf(file, "%i %i", &dec1, &dec2);
 
         if(dec1 < -127 || dec1 > 127 || dec2 < -127 || dec2 > 127){ //verifica se os números são válidos
             printf("\nERRO: USE APENAS NUMEROS DECIMAIS DE -127 A 127\n"); //posso por isso em saida(); usando uma flag
@@ -43,32 +42,33 @@ int main(int argc, char **argv)
         }else{
             //Zera vetores
             for(int i=0; i<8; i++){
-                num1[i] = 0;
-                num2[i] = 0;
-                numc1[i] = 0;
-                numc2[i] = 0;
-                sum[i] = 0;
-                sub[i] = 0;
+                num1[i] = 0; //Obrigatoriamente precisa ser zerado
+                num2[i] = 0; //Obrigatoriamente precisa ser zerado
+                numc1[i] = 0; //Não precisa ser zerado
+                numc2[i] = 0; //Obrigatoriamente precisa ser zerado
+                sum[i] = 0; //Não precisa ser zerado
+                sub[i] = 0; //Não precisa ser zerado
             }
 
-            decToBin(num1, dec1);
+            decToBin(num1, dec1); //(o vetor do primeiro argumento precisa obrigatoriamente ser zerado antes)
             decToBin(num2, dec2);
 
             sumSub(sum, num1, num2);
-            c1(numc1, num2); //O num2 sera complementado a 1
-            c2(numc2, numc1); //complemento a 2
-            sumSub(sub, num1, numc2); //A soma do num1+numc2 e o msm que a subtracao de num1-num2
+            c1(numc1, num2); //O num2 será complementado a 1
+            c2(numc2, numc1); //complemento a 2 (o vetor do primeiro argumento precisa obrigatoriamente ser zerado antes)
+            sumSub(sub, num1, numc2); //A soma do num1+numc2 é o mesmo que a subtração de num1-num2
 
             //mostrar
             saida(dec1, dec2, num1, num2, sum, numc1, numc2, sub);
         }
 
-        l++; //linha
+        l++; //Conta mais uma linha
+        fscanf(file, "%i %i", &dec1, &dec2); //lê os próximos valores
 
     }
 
     fclose(file); //Fecha arquivo .txt
-    //obs: tentar adaptar o código pra funcionaro com mais de dois inteiros decimais na msm linha
+    //obs: tentar adaptar o código pra funcionar com mais de dois inteiros decimais na msm linha
 
 	return 0;
 }
@@ -120,31 +120,28 @@ void saida(int const dec1, int const dec2, int const *num1, int const *num2, int
 
 void decToBin(int *num, const int dec){ //tentar deixar o código mais bonito
 
-	if(dec > 0){
-		int q = dec; //quociente da divisao
-		int i=7;
-		do{
-			num[i] = q % 2;
-			q /= 2;
+    int q;
+    int i=7;
+
+	if(dec > 0){ //Para números positivos
+		q = dec; //Quociente da divisao
+		do{ //Converte o numero decimal para binario
+			num[i] = q % 2; //Divide o decimal por 2 e atribui o resto (que pode ser 0 ou 1) em num[i]
+			q /= 2; //Divide o decimal por 2 e atribui em q para ser usado no próximo loop
 			i--;
-		}while(q != 0);
-	}else if(dec < 0){
-        int q = dec * (-1); //quociente da divisao
-		int i=7;
+		}while(q != 0); //Quando o quociente der 0 a operação acaba
+	}else if(dec < 0){ //Para números negativos
+        q = dec * (-1); //Multiplica por (-1) pro número ficar positivo
 		do{
 			num[i] = q % 2;
 			q /= 2;
 			i--;
 		}while(q != 0);
 
-		int numc1[8];
-		for(int i=0; i<8; i++){
-            numc1[i] = num[i];
-		}
-
+		int numc1[8]; //Vetor usado na operação C1
 		c1(numc1, num);
 
-		for(int i=0; i<8; i++){ //zera o vetor num
+		for(int i=0; i<8; i++){ //zera o vetor num que servirá como numc2
             num[i] = 0;
 		}
         c2(num, numc1);
@@ -154,7 +151,7 @@ void decToBin(int *num, const int dec){ //tentar deixar o código mais bonito
 void sumSub(int operation[], const int num1[], const int num2[]){
 
 	int soma;
-	int k=0;
+	int k=0; //Equivalente ao vai 1 Ex.:(1+1 é 0 e vai 1)
 
 	for(int i=7; i>=0; i--){
 		soma = num1[i] + num2[i] + k;
@@ -182,6 +179,7 @@ void sumSub(int operation[], const int num1[], const int num2[]){
 //Faz a operacao de complemento a 1
 void c1(int vetc1[], const int vet[]){
 
+    //Inverte os bits
 	for(int i=0; i<8; i++){
 		if(vet[i] == 0){
 			vetc1[i] = 1;
@@ -200,29 +198,21 @@ void c1(int vetc1[], const int vet[]){
 //Faz a operacao de complemento a 2
 void c2(int vetc2[], const int vetc1[]){
 
-    //copia o vetc1[] para um vetor vet[] que pode ser alterado
-	int vet[8];
-	for(int i=0; i<8; i++){
-		vet[i] = vetc1[i];
-	}
-
-	//Complemento a 2
 	int i = 7; //contador
 	do{
-		vet[i] += 1;
-		if(vet[i] == 1){ //se o ultimo bit for 0 então inverte para 1
+		if(vetc1[i] == 0){ //se o bit for 0 então inverte para 1
 			vetc2[i] = 1;
+			i--;
 			while(i >= 0){ //Copia o restante dos bits
-				vetc2[i] = vet[i];
+				vetc2[i] = vetc1[i];
 				i--;
-			} //termina com i = -1
-			i++; // i=0 (Talvez esse i++ seja desnecessario se eu usar a segunda opcao no while abaixo)
-		}else if(vet[i] != 2){
+			}
+		}else if(vetc1[i] != 1){
 			printf("ERRO NA FUNCAO c2!\n");
 			getchar();
 			exit(0);
-		}
+		} //Se o bit for 1 entao vetc2[i]=0 e volta uma posição do vetor (não precisa atribuir nada a vetc2[i] pois já está com valor 0 definido)
 		i--;
-	}while(i != -1); // pode ser i >= 0
+	}while(i >= 0);
 
 }
