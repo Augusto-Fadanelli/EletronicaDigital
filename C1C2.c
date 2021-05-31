@@ -35,8 +35,8 @@ int main(int argc, char **argv)
 	fscanf(file, "%i %i", &dec1, &dec2);
     while(!feof(file)){
 
-        if(dec1 < -127 || dec1 > 127 || dec2 < -127 || dec2 > 127){ //verifica se os números são válidos
-            printf("\nERRO: USE APENAS NUMEROS DECIMAIS DE -127 A 127\n"); //posso por isso em saida(); usando uma flag
+	if(dec1 + dec2 > 127 || dec1 + dec2 < -127){ //verifica se os números são válidos
+            printf("\nERRO: USE APENAS NUMEROS DECIMAIS QUE, SOMADOS, ESTEJAM ENTRE -127 A 127\n");
             printf("Linha %i: %i %i\n", l, dec1, dec2);
             printf("\n-----------------------\n");
         }else{
